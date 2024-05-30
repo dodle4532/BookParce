@@ -4,6 +4,10 @@
 #include <vector>
 #include <string>
 #include <ostream>
+enum class Pos{
+    LEFT,
+    RIGHT
+};
 
 
 // Класс, хранящий в себе информацию о главе(подглавы - главы, вложенную в эту главуб индекс - цифры перед названием)

@@ -6,6 +6,8 @@
 #include <QString>
 #include <QFileDialog>
 
+enum class Pos;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -32,7 +34,14 @@ void MainWindow::on_fileButton_clicked()
                                     QString::fromUtf8("Открыть файл"),
                                     QDir::currentPath(),
                                     "Text (*.txt))");
-    book = Book(fileName.toStdString());
+    Pos pagePos;
+    if (ui->pagePosBox->currentText() == "Слева") {
+        pagePos = Pos::LEFT;
+    }
+    else {
+        pagePos = Pos::RIGHT;
+    }
+    book = Book(fileName.toStdString(), ui->whatToParce->currentText().toStdString(), pagePos);
 }
 
 void MainWindow::on_csvButton_clicked()

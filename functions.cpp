@@ -31,7 +31,7 @@ float getSimularityCoefficient(std::string str1, std::string str2) {
     return similarityCoefficient;
 }
 
-int getPageNumber(std::string str) {
+int getPageNumber(std::string str, Pos pagePos) {
 //    if (str[0] != '\f') {
 //        return {-1, chaptType::CHAPTER};
 //    }
@@ -41,40 +41,48 @@ int getPageNumber(std::string str) {
     std::string number;
     //str.erase(str.begin());
     //chaptType tmp;
-//    if (std::isdigit(static_cast<unsigned char>(str[0])) != 0) {
-//        tmp = chaptType::CHAPTER;
-//        number.push_back(str[0]);
-//        for (int i = 1; i < str.size(); ++i) {
-//            if (str[i] == ' ') {
-//                break;
-//            }
-//            number.push_back(str[i]);
-//        }
-//    }
-    if (std::isdigit(static_cast<unsigned char>(str[str.size() - 1])) != 0) {
-      //  tmp = chaptType::SUBCHAPTER;
-        number.push_back(str[str.size() - 1]);
-        for (int i = str.size() - 2; i > 0; --i) {
-            if (str[i] == ' ' || str[i] == '.') {
-                break;
+    if (pagePos == Pos::RIGHT) {
+        if (std::isdigit(static_cast<unsigned char>(str[str.size() - 1])) != 0) {
+          //  tmp = chaptType::SUBCHAPTER;
+            //number.push_back(str[str.size() - 1]);
+            for (int i = str.size() - 1; i >= 0; --i) {
+                if (!(std::isdigit(static_cast<unsigned char>(str[i])))) {
+                    break;
+                }
+                number.insert(number.begin(), str[i]);
             }
-            number.insert(number.begin(), str[i]);
+        }
+    }
+    else {
+        if (std::isdigit(static_cast<unsigned char>(str[0])) != 0) {
+            //number.push_back(str[0]);
+            for (int i = 0; i < str.size(); ++i) {
+                if (str[i] == ' ') {
+                    break;
+                }
+                number.push_back(str[i]);
+            }
         }
     }
     return number != "" ? std::stoi(number) : -1;
 }
 
-std::pair<int, std::string> getChapterPageAndName(std::string str) {
+std::pair<int, std::string> getChapterPageAndName(std::string str, Pos pagePos) {
 //    if (str[0] != '\f') {
 //        return {-1, {"", chaptType::CHAPTER}};
 //    }
-    int p = getPageNumber(str);
+    int p = getPageNumber(str, pagePos);
     std::string page = std::to_string(p);
     //str.erase(str.begin());
     if (page == "-1") {
         return {-1, ""};
     }
+    std::string idx = getIdx(str);
+    std::reverse(str.begin(), str.end());
+    std::reverse(page.begin(), page.end());
     str.erase(str.find(page), str.find(page) + page.size());
+    std::reverse(str.begin(), str.end());
+    std::reverse(page.begin(), page.end());
     std::string substr;
 //    for (auto & i : str) {
 //        if (i == ' ') {
@@ -88,7 +96,7 @@ std::pair<int, std::string> getChapterPageAndName(std::string str) {
     std::reverse(str.begin(), str.end());
     //substr.clear();
     for (auto & i : str) {
-        if (i == ' ' || i == '.' || i == '…') {
+        if (i == ' ' || i == '.' || i == '…' || i == '_') {
             substr.push_back(i);
         }
         else {
@@ -111,12 +119,18 @@ std::string getIndexBeginning(std::string index) {
             break;
         }
     }
-    result.push_back('.');
+    if (result != "") {
+        result.push_back('.');
+    }
     return result;
 }
 
-std::string getIdx(std::string str) {
+std::string getIdx(std::string str, Pos pagePos) {
     std::string index;
+    if (pagePos == Pos::LEFT) {
+        removeNumbersFromBeginning(str);
+        removeSpacesFromBeginning(str);
+    }
     for (auto i : str) {
         if (std::isdigit(static_cast<unsigned char>(i)) != 0 || i == '.') {
                 index.push_back(i);
@@ -129,7 +143,11 @@ std::string getIdx(std::string str) {
 }
 
 bool isSingleIndex(std::string str) {
-    std::string index = getIndexBeginning(getIdx(str));
+    std::string idx = getIdx(str);
+    if (idx == "") {
+        return false;
+    }
+    std::string index = getIndexBeginning(idx);
     str.erase(str.begin(), str.begin() + index.size());
     if (getIdx(str) == "") {
         return true;
@@ -140,7 +158,7 @@ bool isSingleIndex(std::string str) {
 void removeSpacesFromBeginning(std::string& str) {
     int spaceCount = 0;
     for (auto & i: str) {
-        if (i == ' ') {
+        if (i == ' ' || i == '\t') {
             spaceCount++;
         }
         else {
@@ -148,4 +166,23 @@ void removeSpacesFromBeginning(std::string& str) {
         }
     }
     str.erase(str.begin(), str.begin() + spaceCount);
+}
+
+void removeSpacesFromEnding(std::string& str) {
+    std::reverse(str.begin(), str.end());
+    removeSpacesFromBeginning(str);
+    std::reverse(str.begin(), str.end());
+}
+
+void removeNumbersFromBeginning(std::__cxx11::string &str) {
+    int numberLen = 0;
+    for (auto & i: str) {
+        if (std::isdigit(static_cast<unsigned char>(i)) != 0) {
+            numberLen++;
+        }
+        else {
+            break;
+        }
+    }
+    str.erase((str.begin()), str.begin() + numberLen);
 }

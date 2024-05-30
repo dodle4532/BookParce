@@ -63,6 +63,105 @@
      <string>Save to CSV</string>
     </property>
    </widget>
+   <widget class="QComboBox" name="whatToParce">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>190</y>
+      <width>101</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Содержание</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Оглавление</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="labelWhatToParce">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>160</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Что парсить?</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="indexLabel">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>270</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Вид индекса</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>310</y>
+      <width>73</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>1.1</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>1.1.</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="pagePosLabel">
+    <property name="geometry">
+     <rect>
+      <x>1040</x>
+      <y>140</y>
+      <width>171</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Где в оглавлении страницы?</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="pagePosBox">
+    <property name="geometry">
+     <rect>
+      <x>1090</x>
+      <y>190</y>
+      <width>73</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Слева</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Справа</string>
+     </property>
+    </item>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

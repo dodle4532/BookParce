@@ -19,7 +19,9 @@ std::string Chapter::getName() {
 std::string Chapter::getNameWOIndex() {
     std::string copy = name;
     copy.erase(copy.begin(), copy.begin() + index.size());
+    removeNumbersFromBeginning(copy);
     removeSpacesFromBeginning(copy);
+    removeSpacesFromEnding(copy);
     return copy;
 }
 
@@ -74,6 +76,13 @@ Chapter& Chapter::operator [](int i) {
 }
 
 Chapter& getSubchapter(Chapter* ch, std::string idx) {
+    std::string index = ch->getIndex();
+    if (index != "") {
+        index += ".";
+    }
+    if (idx == index) {
+        return *ch;
+    }
     for (auto &i : ch->subchapters) {
         if (idx == i.getIndex()) {
             return i;

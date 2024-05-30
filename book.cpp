@@ -10,12 +10,25 @@
 
 int fileLen;
 
-Book::Book(std::string path) : path(path){}
+Book::Book(std::string path, std::string parseName, Pos pagePos) : path(path), parseName(parseName), pagePos(pagePos){}
+
+
+
+bool isFind(std::string line, std::string str) {
+//    line = toUpper(line);
+//    str = toUpper(str);
+    if (line.find(str) != std::string::npos) {
+        return true;
+    }
+    return false;
+}
+
 
 void Book::parse() {
     std::fstream fd(path);
     int n = 0;
     parseNeed = false;
+    bool isFirstWithIndex = false;
     int id = 1;
     std::string firstChapter; // Первая глава, как только мы ее встретим, то оглавление закончится
     while (!(fd.eof())) {
@@ -24,25 +37,37 @@ void Book::parse() {
         std::getline(fd, line);
         removeSpacesFromBeginning(line);
         // Ищем начало оглавления
-        if (line.find("Содержание") != std::string::npos) {
+        if (n == 85) {
+            std::cout << 1;
+        }
+        if (isFind(line, parseName)) {
+            if (parseNeed == true) {
+                continue;
+            }
             parseNeed = true;
             continue;
         }
         // Завершаем чтение
-        if (line.find(firstChapter) != std::string::npos && parseNeed == true && firstChapter != "") {
+        if (isFind(line, firstChapter) && parseNeed == true && firstChapter != "") {
             break;
         }
-        if (!parseNeed) {
+        if (!parseNeed || line == "") {
             continue; // Если еще не дошли до оглавления, то продолжаем искать
         }
-        auto pair = getChapterPageAndName(line);
+        auto pair = getChapterPageAndName(line, pagePos);
         if (pair.first < 0) { // Некорректная страница - не то, что нам нужно
+            break;
+        }
+        if (pair.second == "") {
             continue;
         }
-        if (getIdx(line) == "") { // Если нет индекса, то это глава, иначе это какая-то подглава
+        if (getIdx(pair.second) == "" || chapters.size() == 0 || (isSingleIndex(firstChapter) && isSingleIndex(pair.second))) { // Если нет индекса, то это глава, иначе это какая-то подглава
             chapters.emplace_back(pair.second, pair.first, id);
             if (firstChapter == "") {
                 firstChapter = pair.second; // Устанавливаем первую главу
+                if (getIdx(firstChapter) != "") {
+                    isFirstWithIndex = true;
+                }
             }
         }
         else {
@@ -76,7 +101,7 @@ int Book::getLastPage(int lastChapterStartPage) {
         rows.push_back(str);
     }
     for (int i = rows.size() - 1; i > 0; --i) {
-        int page = getPageNumber(rows[i]);
+        int page = getPageNumber(rows[i], pagePos);
         if (page > lastChapterStartPage) {
             return page;
         }
@@ -123,8 +148,8 @@ void Book::saveToCsv(std::string path) {
     fd << "id;index;title;start_page;end_page;parent_unit;level;\n";
     std::vector<std::pair<int, std::string>> result; // Вектор, по итогу состоящий из всех глав, хранящий номер Id и ряд CSV
     for (auto & i: chapters) {
-        result.push_back({i.getId(), std::to_string(i.getId()) + ";" + i.getIndex() + ";" + i.getName()
-                          + ";" + std::to_string(i.getStartPage()) + ";" + std::to_string(i.getEndPage()) + ";" + "1;"});
+        result.push_back({i.getId(), std::to_string(i.getId()) + ";" + i.getIndex() + ";" + i.getNameWOIndex()
+                          + ";" + std::to_string(i.getStartPage()) + ";" + std::to_string(i.getEndPage()) + ";" + ";" + "1;"});
     }
     std::vector<Chapter*> elementsToLoop; //Элементы, по которым будем проходиться
     std::vector<Chapter*> tmp; // Временно будем сюда записывать то, по чему впоследствии будем проходиться
