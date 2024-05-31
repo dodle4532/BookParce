@@ -109,7 +109,7 @@
      <string>Вид индекса</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="comboBox">
+   <widget class="QComboBox" name="indexComboBox">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -125,7 +125,7 @@
     </item>
     <item>
      <property name="text">
-      <string>1.1.</string>
+      <string>Глава 1</string>
      </property>
     </item>
    </widget>
@@ -159,6 +159,39 @@
     <item>
      <property name="text">
       <string>Справа</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>1060</x>
+      <y>300</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Подглавы?</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="subchaptersComboBox">
+    <property name="geometry">
+     <rect>
+      <x>1010</x>
+      <y>330</y>
+      <width>171</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Разделены по индексам</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Идут сразу после глав</string>
      </property>
     </item>
    </widget>

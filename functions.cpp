@@ -38,6 +38,8 @@ int getPageNumber(std::string str, Pos pagePos) {
     if (str == "") {
         return -1;
     }
+    removeSpacesFromBeginning(str);
+    removeSpacesFromEnding(str);
     std::string number;
     //str.erase(str.begin());
     //chaptType tmp;

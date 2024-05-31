@@ -11,7 +11,7 @@ class Book
 {
 public:
     Book() = default;
-    Book(std::string path, std::string parseName, Pos pagePos);
+    Book(std::string path, std::string parseName, Pos pagePos, std::string indexWord, bool isNoSubchaptersIndex);
     ~Book() = default;
     void parse();
     std::string getContent(); // Получаем оглавление в виде строки, чтобы вывести ее в textField
@@ -24,6 +24,8 @@ private:
     Pos pagePos;
     std::string path;
     std::string parseName;
+    std::string indexWord;
+    bool isNoSubchaptersIndex;
     int currentPage = 0;
     bool parseNeed = true;
     bool isStartPassed = false;

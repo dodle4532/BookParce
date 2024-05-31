@@ -57,6 +57,10 @@ void Chapter::addSubchapter(std::pair<int, std::string> pageAndName, int id) {
     Chapter* element = this; // Элемент, который будет меняться по мере нашего углубления на уровни ниже
     std::string name = pageAndName.second;
     std::string idx = " ";
+    if (getIdx(name) == "") {
+        subchapters.emplace_back(pageAndName, id);
+        return;
+    }
     while (idx != "") {
         if (isSingleIndex(name)) { // Если у нас остался единичный индекс, то мы на нужном уровне
             break;

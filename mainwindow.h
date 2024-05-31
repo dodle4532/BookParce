@@ -26,6 +26,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     Book book;
+    std::string path;
 };
 
 #endif // MAINWINDOW_H

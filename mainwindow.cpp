@@ -23,6 +23,24 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_parseButton_clicked()
 {
+    Pos pagePos;
+    if (ui->pagePosBox->currentText() == "Слева") {
+        pagePos = Pos::LEFT;
+    }
+    else {
+        pagePos = Pos::RIGHT;
+    }
+    std::string indexWord = "";
+    if (ui->indexComboBox->currentText() != "1.1") {
+        std::string index = ui->indexComboBox->currentText().toStdString();
+        index.pop_back();
+        indexWord = index;
+    }
+    bool isNoSubchaptersIndex = true;
+    if (ui->subchaptersComboBox->currentText() == "Разделены по индексам") {
+        isNoSubchaptersIndex = false;
+    }
+    book = Book(path, ui->whatToParce->currentText().toStdString(), pagePos, indexWord, isNoSubchaptersIndex);
     book.parse();
     ui->textField->setText(QString::fromStdString(book.getContent()));
     ui->csvButton->setVisible(true);
@@ -34,14 +52,8 @@ void MainWindow::on_fileButton_clicked()
                                     QString::fromUtf8("Открыть файл"),
                                     QDir::currentPath(),
                                     "Text (*.txt))");
-    Pos pagePos;
-    if (ui->pagePosBox->currentText() == "Слева") {
-        pagePos = Pos::LEFT;
-    }
-    else {
-        pagePos = Pos::RIGHT;
-    }
-    book = Book(fileName.toStdString(), ui->whatToParce->currentText().toStdString(), pagePos);
+    path = fileName.toStdString();
+
 }
 
 void MainWindow::on_csvButton_clicked()
