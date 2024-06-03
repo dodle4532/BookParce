@@ -56,22 +56,61 @@ void Book::parse() {
         if (!parseNeed || line == "") {
             continue; // Если еще не дошли до оглавления, то продолжаем искать
         }
-        if (indexWord != "") {
+        if (indexWord == "Глава ") {
             if (isFind(line, indexWord)) {
                 line.erase(line.begin(), line.begin() + indexWord.size());
             }
         }
+        else if (isFind(indexWord, "Часть 1 Глава")) {
+            removeSpacesFromEnding(indexWord);
+            std::string firstWord;
+            std::string secondWord;
+            for (auto & i: indexWord) {
+                if (i != ' ') {
+                    firstWord += i;
+                }
+                else {
+                    break;
+                }
+            }
+            for (int i = indexWord.size() - 1; i >= 0; --i) {
+                if (indexWord[i] != ' ') {
+                    secondWord += indexWord[i];
+                }
+                else {
+                    break;
+                }
+            }
+            std::reverse(secondWord.begin(), secondWord.end());
+            if (isFind(line, firstWord)) {
+                line.erase(line.begin(), line.begin() + firstWord.size() + 1);
+            }
+            if (isFind(line, secondWord)) {
+                line.erase(line.begin(), line.begin() + secondWord.size() + 1);
+                std::string upperIdx = chapters[chapters.size() - 1].getIndex();
+                line = upperIdx + line;
+            }
+        }
         auto pair = getChapterPageAndName(line, pagePos);
-        if (pair.first < 0) { // Некорректная страница - не то, что нам нужно
-            break;
+        if (pair.first < 0 && chapters.size() != 0) { // Некорректная страница - не то, что нам нужно
+//            break;
+            continue;
         }
         if (pair.second == "") {
             continue;
         }
+        if (isPrevWithIndex) {
+            std::string index = getIdx(line);
+            if (index != "" && !isSingleIndex(index)) {
+                chapters[chapters.size() - 1].addSubchapter(pair, id);
+                continue;
+            }
+        }
         if (isPrevWithIndex && isNoSubchaptersIndex && getIdx(line) != "") {
             isPrevWithIndex = false;
         }
-        if ((getIdx(pair.second) == "" || chapters.size() == 0 || (isSingleIndex(firstChapter) && isSingleIndex(pair.second)) || (isNoSubchaptersIndex && !isPrevWithIndex))
+        // Часть 1., Глава 1 - 1.1
+        if ((getIdx(pair.second) == "" || chapters.size() == 0 || ((isSingleIndex(firstChapter)) || chapters.size() == 1) && isSingleIndex(pair.second) || (isNoSubchaptersIndex && !isPrevWithIndex))
             && !(isPrevWithIndex && getIdx(pair.second) == "" && isNoSubchaptersIndex)) { // Если нет индекса, то это глава, иначе это какая-то подглава
             chapters.emplace_back(pair.second, pair.first, id);
             if (isSingleIndex(getIdx(pair.second))) {
@@ -82,6 +121,7 @@ void Book::parse() {
                 if (getIdx(firstChapter) != "") {
                     isFirstWithIndex = true;
                 }
+                removeSpacesFromEnding(firstChapter);
             }
         }
         else {
@@ -164,8 +204,12 @@ void Book::saveToCsv(std::string path) {
     for (auto & i: chapters) {
         std::string name = i.getNameWOIndex();
         std::string index = i.getIndex();
-        if (indexWord != "" && index != "") {
+        if (indexWord == "Глава " && index != "") {
             name = indexWord + index + " " + name;
+            index = "";
+        }
+        else if (indexWord == "Часть 1 Глава" && index != "") {
+            name = "Часть " + index + " " + name;
             index = "";
         }
         result.push_back({i.getId(), std::to_string(i.getId()) + ";" + index + ";" + name
@@ -184,8 +228,13 @@ void Book::saveToCsv(std::string path) {
             for (auto& j: i->subchapters) {
                 std::string name = j.getNameWOIndex();
                 std::string index = j.getIndex();
-                if (indexWord != "" && index != "") {
+                if (indexWord == "Глава " && index != "") {
                     name = indexWord + index + " " + name;
+                    index = "";
+                }
+                else if (indexWord == "Часть 1 Глава" && index != "") {
+                    index.erase(index.begin(), index.begin() + getIndexBeginning(index).size());
+                    name = "Глава " + index + " " + name;
                     index = "";
                 }
                 result.push_back({j.getId(), std::to_string(j.getId()) + ";" + index + ";" + name

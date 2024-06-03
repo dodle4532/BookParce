@@ -56,10 +56,23 @@ void Chapter::addSubchapter(std::pair<int, std::string> pageAndName, int id) {
     }
     Chapter* element = this; // Элемент, который будет меняться по мере нашего углубления на уровни ниже
     std::string name = pageAndName.second;
+    std::string indexBeg = getIndexBeginning(getIdx(name));
+    if (indexBeg != index) {
+        element = &getSubchapter(element, indexBeg);
+    }
+    name.erase(name.begin(), name.begin() + getIndexBeginning(getIdx(name)).size());
     std::string idx = " ";
     if (getIdx(name) == "") {
-        subchapters.emplace_back(pageAndName, id);
-        return;
+        while (1) {
+            if (element->subchapters.size() != 0 && element->subchapters[element->subchapters.size() - 1].getIndex() != "") {
+                element = &element->subchapters[element->subchapters.size() - 1];
+            }
+            else {
+                element->subchapters.emplace_back(pageAndName, id);
+                return;
+            }
+        }
+//        subchapters.emplace_back(pageAndName, id);
     }
     while (idx != "") {
         if (isSingleIndex(name)) { // Если у нас остался единичный индекс, то мы на нужном уровне
@@ -80,13 +93,15 @@ Chapter& Chapter::operator [](int i) {
 }
 
 Chapter& getSubchapter(Chapter* ch, std::string idx) {
-    std::string index = ch->getIndex();
-    if (index != "") {
-        index += ".";
-    }
-    if (idx == index) {
-        return *ch;
-    }
+//    std::string index = ch->getIndex();
+//    if (index != "") {
+//        if (index[index.size() - 1] != '.') {
+//            index += ".";
+//        }
+//    }
+//    if (idx == index) {
+//        return *ch;
+//    }
     for (auto &i : ch->subchapters) {
         if (idx == i.getIndex()) {
             return i;

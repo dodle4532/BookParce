@@ -128,6 +128,11 @@
       <string>Глава 1</string>
      </property>
     </item>
+    <item>
+     <property name="text">
+      <string>Часть 1 Глава 1</string>
+     </property>
+    </item>
    </widget>
    <widget class="QLabel" name="pagePosLabel">
     <property name="geometry">
@@ -153,12 +158,12 @@
     </property>
     <item>
      <property name="text">
-      <string>Слева</string>
+      <string>Справа</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>Справа</string>
+      <string>Слева</string>
      </property>
     </item>
    </widget>
