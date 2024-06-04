@@ -23,6 +23,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_parseButton_clicked()
 {
+    if (path == "") {
+        return;
+    }
     Pos pagePos;
     if (ui->pagePosBox->currentText() == "Слева") {
         pagePos = Pos::LEFT;

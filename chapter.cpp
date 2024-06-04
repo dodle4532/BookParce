@@ -58,7 +58,11 @@ void Chapter::addSubchapter(std::pair<int, std::string> pageAndName, int id) {
     std::string name = pageAndName.second;
     std::string indexBeg = getIndexBeginning(getIdx(name));
     if (indexBeg != index) {
-        element = &getSubchapter(element, indexBeg);
+        element = getSubchapter(element, indexBeg);
+        if (element == nullptr) {
+            subchapters.emplace_back(pageAndName, id);
+            return;
+        }
     }
     name.erase(name.begin(), name.begin() + getIndexBeginning(getIdx(name)).size());
     std::string idx = " ";
@@ -72,14 +76,13 @@ void Chapter::addSubchapter(std::pair<int, std::string> pageAndName, int id) {
                 return;
             }
         }
-//        subchapters.emplace_back(pageAndName, id);
     }
     while (idx != "") {
         if (isSingleIndex(name)) { // Если у нас остался единичный индекс, то мы на нужном уровне
             break;
         }
         idx = getIndexBeginning(getIdx(name));
-        element = &getSubchapter(element, idx); // Меняем элемент, идем на уровень ниже
+        element = getSubchapter(element, idx); // Меняем элемент, идем на уровень ниже
         name.erase(name.begin(), name.begin() + idx.size()); // Убираем один уровень из индекса имени
     }
 //    if (element->subchapters.size() > 0) {
@@ -92,7 +95,7 @@ Chapter& Chapter::operator [](int i) {
     return subchapters[i];
 }
 
-Chapter& getSubchapter(Chapter* ch, std::string idx) {
+Chapter* getSubchapter(Chapter* ch, std::string idx) {
 //    std::string index = ch->getIndex();
 //    if (index != "") {
 //        if (index[index.size() - 1] != '.') {
@@ -102,12 +105,15 @@ Chapter& getSubchapter(Chapter* ch, std::string idx) {
 //    if (idx == index) {
 //        return *ch;
 //    }
+    if (idx == "") {
+        return &ch->subchapters[ch->subchapters.size() - 1];
+    }
     for (auto &i : ch->subchapters) {
         if (idx == i.getIndex()) {
-            return i;
+            return &i;
         }
     }
-    return ch->subchapters[ch->subchapters.size() - 1];
+    return nullptr;
 }
 
 std::ostream& operator<<(std::ostream& out, Chapter& ch) {

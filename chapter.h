@@ -28,7 +28,7 @@ public:
     void addSubchapter(std::pair<int, std::string> nameAndPage, int id);
 
     Chapter& operator[] (int i);
-    friend Chapter& getSubchapter(Chapter* ch, std::string idx);
+    friend Chapter* getSubchapter(Chapter* ch, std::string idx);
     friend std::ostream& operator<< (std::ostream& out, Chapter& ch);
 
     friend class Book;

@@ -103,6 +103,7 @@ void Book::parse() {
             std::string index = getIdx(line);
             if (index != "" && !isSingleIndex(index)) {
                 chapters[chapters.size() - 1].addSubchapter(pair, id);
+                id++;
                 continue;
             }
         }
