@@ -45,6 +45,7 @@ void MainWindow::on_parseButton_clicked()
     }
     book = Book(path, ui->whatToParce->currentText().toStdString(), pagePos, indexWord, isNoSubchaptersIndex);
     book.parse();
+    ui->textField->clear();
     ui->textField->setText(QString::fromStdString(book.getContent()));
     ui->csvButton->setVisible(true);
 }
@@ -56,6 +57,10 @@ void MainWindow::on_fileButton_clicked()
                                     QDir::currentPath(),
                                     "Text (*.txt))");
     path = fileName.toStdString();
+    if (ui->csvButton->isVisible()) {
+        ui->csvButton->setVisible(false);
+        ui->parseButton->setVisible(true);
+    }
 
 }
 

@@ -106,10 +106,21 @@ Chapter* getSubchapter(Chapter* ch, std::string idx) {
 //        return *ch;
 //    }
     if (idx == "") {
-        return &ch->subchapters[ch->subchapters.size() - 1];
+        if (ch->getIndex() == "")
+            return &ch->subchapters[ch->subchapters.size() - 1];
+        else {
+            return ch;
+        }
     }
     for (auto &i : ch->subchapters) {
-        if (idx == i.getIndex()) {
+        std::string index = i.getIndex();
+        if (!isSingleIndex(index)) {
+            while (!(isSingleIndex(index))) {
+                std::string indexBeg = getIndexBeginning(index);
+                index.erase(index.begin(), index.begin() + indexBeg.size());
+            }
+        }
+        if (idx == index) {
             return &i;
         }
     }

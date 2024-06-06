@@ -149,6 +149,9 @@ bool isSingleIndex(std::string str) {
     if (idx == "") {
         return false;
     }
+    if (str[str.size() - 1] != '.') {
+        str.push_back('.');
+    }
     std::string index = getIndexBeginning(idx);
     str.erase(str.begin(), str.begin() + index.size());
     if (getIdx(str) == "") {

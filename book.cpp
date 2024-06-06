@@ -58,7 +58,7 @@ void Book::parse() {
         }
         if (indexWord == "Глава ") {
             if (isFind(line, indexWord)) {
-                line.erase(line.begin(), line.begin() + indexWord.size());
+                line.erase(std::find(line.begin(), line.end(), indexWord[0]), std::find(line.begin(), line.end(), indexWord[0]) + indexWord.size());
             }
         }
         else if (isFind(indexWord, "Часть 1 Глава")) {
@@ -93,33 +93,33 @@ void Book::parse() {
         }
         auto pair = getChapterPageAndName(line, pagePos);
         if (pair.first < 0 && chapters.size() != 0) { // Некорректная страница - не то, что нам нужно
-//            break;
-            continue;
+            break;
+//            continue;
         }
         if (pair.second == "") {
             continue;
         }
         if (isPrevWithIndex) {
-            std::string index = getIdx(line);
+            std::string index = getIdx(line, pagePos);
             if (index != "" && !isSingleIndex(index)) {
                 chapters[chapters.size() - 1].addSubchapter(pair, id);
                 id++;
                 continue;
             }
         }
-        if (isPrevWithIndex && isNoSubchaptersIndex && getIdx(line) != "") {
+        if (isPrevWithIndex && isNoSubchaptersIndex && getIdx(line, pagePos) != "") {
             isPrevWithIndex = false;
         }
-        // Часть 1., Глава 1 - 1.1
-        if ((getIdx(pair.second) == "" || chapters.size() == 0 || ((isSingleIndex(firstChapter)) || chapters.size() == 1) && isSingleIndex(pair.second) || (isNoSubchaptersIndex && !isPrevWithIndex))
-            && !(isPrevWithIndex && getIdx(pair.second) == "" && isNoSubchaptersIndex)) { // Если нет индекса, то это глава, иначе это какая-то подглава
+        // Часть 1., Глава 1 - 1.
+        if ((getIdx(pair.second, pagePos) == "" || chapters.size() == 0 || ((isSingleIndex(firstChapter)) || chapters.size() == 1) && isSingleIndex(pair.second) || (isNoSubchaptersIndex && !isPrevWithIndex))
+            && !(isPrevWithIndex && getIdx(pair.second, pagePos) == "" && isNoSubchaptersIndex)) { // Если нет индекса, то это глава, иначе это какая-то подглава
             chapters.emplace_back(pair.second, pair.first, id);
-            if (isSingleIndex(getIdx(pair.second))) {
+            if (isSingleIndex(getIdx(pair.second, pagePos))) {
                 isPrevWithIndex = true;
             }
             if (firstChapter == "") {
                 firstChapter = pair.second; // Устанавливаем первую главу
-                if (getIdx(firstChapter) != "") {
+                if (getIdx(firstChapter, pagePos) != "") {
                     isFirstWithIndex = true;
                 }
                 removeSpacesFromEnding(firstChapter);
