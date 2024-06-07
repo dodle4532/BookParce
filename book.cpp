@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <tuple>
 #include <iostream>
+#include <string>
 
 int fileLen;
 
@@ -16,9 +17,9 @@ Book::Book(std::string path, std::string parseName, Pos pagePos, std::string ind
 
 
 bool isFind(std::string line, std::string str) {
-//    line = toUpper(line);
-//    str = toUpper(str);
-    if (line.find(str) != std::string::npos) {
+    QString s1 = QString::fromStdString(line).toLower();
+    QString s2 = QString::fromStdString(str).toLower();
+    if (s1.toStdString().find(s2.toStdString()) != std::string::npos) {
         return true;
     }
     return false;
@@ -93,25 +94,33 @@ void Book::parse() {
         }
         auto pair = getChapterPageAndName(line, pagePos);
         if (pair.first < 0 && chapters.size() != 0) { // Некорректная страница - не то, что нам нужно
-            break;
-//            continue;
+//            break;
+            continue;
         }
         if (pair.second == "") {
             continue;
         }
         if (isPrevWithIndex) {
+            if (isNoSubchaptersIndex && getIdx(line, pagePos) != "") {
+                isPrevWithIndex = false;
+            }
             std::string index = getIdx(line, pagePos);
-            if (index != "" && !isSingleIndex(index)) {
-                chapters[chapters.size() - 1].addSubchapter(pair, id);
-                id++;
-                continue;
+            if (index != "") {
+                if (!isSingleIndex(index)) {
+                    chapters[chapters.size() - 1].addSubchapter(pair, id);
+                    id++;
+                    continue;
+                }
+                else {
+                    isPrevWithIndex = false;
+                }
             }
         }
-        if (isPrevWithIndex && isNoSubchaptersIndex && getIdx(line, pagePos) != "") {
-            isPrevWithIndex = false;
-        }
+//        if (isPrevWithIndex && isNoSubchaptersIndex && getIdx(line, pagePos) != "") {
+//            isPrevWithIndex = false;
+//        }
         // Часть 1., Глава 1 - 1.
-        if ((getIdx(pair.second, pagePos) == "" || chapters.size() == 0 || ((isSingleIndex(firstChapter)) || chapters.size() == 1) && isSingleIndex(pair.second) || (isNoSubchaptersIndex && !isPrevWithIndex))
+        if ((getIdx(pair.second, pagePos) == "" || chapters.size() == 0 || (((isSingleIndex(firstChapter)) || chapters.size() == 1) && isSingleIndex(pair.second)) || (isNoSubchaptersIndex && !isPrevWithIndex))
             && !(isPrevWithIndex && getIdx(pair.second, pagePos) == "" && isNoSubchaptersIndex)) { // Если нет индекса, то это глава, иначе это какая-то подглава
             chapters.emplace_back(pair.second, pair.first, id);
             if (isSingleIndex(getIdx(pair.second, pagePos))) {
@@ -126,6 +135,21 @@ void Book::parse() {
             }
         }
         else {
+            std::string index = chapters[chapters.size() - 1].getIndex();
+            if (index != "" && isSingleIndex(index)) {
+                try {
+                    int lastI = std::stoi(index);
+                    int curr = std::stoi(getIdx(pair.second, pagePos));
+                    if (lastI + 1 == curr) {
+                        chapters.emplace_back(pair.second, pair.first, id);
+                        id++;
+                        continue;
+                    }
+                }
+                catch(...) {
+
+                }
+            }
             chapters[chapters.size() - 1].addSubchapter(pair, id);
         }
         id++;
