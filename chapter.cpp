@@ -96,15 +96,6 @@ Chapter& Chapter::operator [](int i) {
 }
 
 Chapter* getSubchapter(Chapter* ch, std::string idx) {
-//    std::string index = ch->getIndex();
-//    if (index != "") {
-//        if (index[index.size() - 1] != '.') {
-//            index += ".";
-//        }
-//    }
-//    if (idx == index) {
-//        return *ch;
-//    }
     if (idx == "") {
         if (ch->getIndex() == "")
             return &ch->subchapters[ch->subchapters.size() - 1];
