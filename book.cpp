@@ -109,6 +109,9 @@ void Book::parse() {
                 if (!isSingleIndex(index)) {
                     chapters[chapters.size() - 1].addSubchapter(pair, id);
                     id++;
+                    if (index != "") {
+                        isPrevWithIndex = true;
+                    }
                     continue;
                 }
                 else {
@@ -131,6 +134,7 @@ void Book::parse() {
                 if (getIdx(firstChapter, pagePos) != "") {
                     isFirstWithIndex = true;
                 }
+                removeSpacesFromBeginning(firstChapter);
                 removeSpacesFromEnding(firstChapter);
             }
         }
