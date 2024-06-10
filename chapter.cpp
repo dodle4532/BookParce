@@ -85,9 +85,6 @@ void Chapter::addSubchapter(std::pair<int, std::string> pageAndName, int id) {
         element = getSubchapter(element, idx); // Меняем элемент, идем на уровень ниже
         name.erase(name.begin(), name.begin() + idx.size()); // Убираем один уровень из индекса имени
     }
-//    if (element->subchapters.size() > 0) {
-//        element->subchapters[element->subchapters.size() - 1].endPage = pageAndName.first;
-//    }
     element->subchapters.emplace_back(pageAndName, id); // Добавляем куда надо
 }
 

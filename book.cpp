@@ -119,10 +119,6 @@ void Book::parse() {
                 }
             }
         }
-//        if (isPrevWithIndex && isNoSubchaptersIndex && getIdx(line, pagePos) != "") {
-//            isPrevWithIndex = false;
-//        }
-        // Часть 1., Глава 1 - 1.
         if ((getIdx(pair.second, pagePos) == "" || chapters.size() == 0 || (((isSingleIndex(firstChapter)) || chapters.size() == 1) && isSingleIndex(pair.second)) || (isNoSubchaptersIndex && !isPrevWithIndex))
             && !(isPrevWithIndex && getIdx(pair.second, pagePos) == "" && isNoSubchaptersIndex)) { // Если нет индекса, то это глава, иначе это какая-то подглава
             chapters.emplace_back(pair.second, pair.first, id);
@@ -225,10 +221,10 @@ void Book::fillEndPages() {
     }
 }
 
-void Book::saveToCsv(std::string path) {
+std::string Book::getCsv() {
     fillEndPages();
-    std::ofstream fd(path + "/content.csv");
-    fd << "id;index;title;start_page;end_page;parent_unit;level;\n";
+    std::string resultStr;
+    resultStr += "id;index;title;start_page;end_page;parent_unit;level;\n";
     std::vector<std::pair<int, std::string>> result; // Вектор, по итогу состоящий из всех глав, хранящий номер Id и ряд CSV
     for (auto & i: chapters) {
         std::string name = i.getNameWOIndex();
@@ -282,6 +278,12 @@ void Book::saveToCsv(std::string path) {
                                             return p1.first < p2.first;
     });
     for (auto &i : result) {
-       fd << i.second << std::endl;
+       resultStr += i.second + "\n";
     }
+    return resultStr;
+}
+
+void Book::saveToCsv(std::string path) {
+    std::ofstream fd(path + "/content.csv");
+    fd << getCsv();
 }

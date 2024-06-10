@@ -32,21 +32,14 @@ float getSimularityCoefficient(std::string str1, std::string str2) {
 }
 
 int getPageNumber(std::string str, Pos pagePos) {
-//    if (str[0] != '\f') {
-//        return {-1, chaptType::CHAPTER};
-//    }
     if (str == "") {
         return -1;
     }
     removeSpacesFromBeginning(str);
     removeSpacesFromEnding(str);
     std::string number;
-    //str.erase(str.begin());
-    //chaptType tmp;
     if (pagePos == Pos::RIGHT) {
         if (std::isdigit(static_cast<unsigned char>(str[str.size() - 1])) != 0) {
-          //  tmp = chaptType::SUBCHAPTER;
-            //number.push_back(str[str.size() - 1]);
             for (int i = str.size() - 1; i >= 0; --i) {
                 if (!(std::isdigit(static_cast<unsigned char>(str[i])))) {
                     break;
@@ -57,7 +50,6 @@ int getPageNumber(std::string str, Pos pagePos) {
     }
     else {
         if (std::isdigit(static_cast<unsigned char>(str[0])) != 0) {
-            //number.push_back(str[0]);
             for (int i = 0; i < str.size(); ++i) {
                 if (str[i] == ' ') {
                     break;
@@ -70,12 +62,8 @@ int getPageNumber(std::string str, Pos pagePos) {
 }
 
 std::pair<int, std::string> getChapterPageAndName(std::string str, Pos pagePos) {
-//    if (str[0] != '\f') {
-//        return {-1, {"", chaptType::CHAPTER}};
-//    }
     int p = getPageNumber(str, pagePos);
     std::string page = std::to_string(p);
-    //str.erase(str.begin());
     if (page == "-1") {
         return {-1, ""};
     }
@@ -86,17 +74,7 @@ std::pair<int, std::string> getChapterPageAndName(std::string str, Pos pagePos) 
     std::reverse(str.begin(), str.end());
     std::reverse(page.begin(), page.end());
     std::string substr;
-//    for (auto & i : str) {
-//        if (i == ' ') {
-//            substr.push_back(i);
-//        }
-//        else {
-//            str.erase(str.begin(), str.begin() + substr.size());
-//            break;
-//        }
-//    }
     std::reverse(str.begin(), str.end());
-    //substr.clear();
     for (auto & i : str) {
         if (i == ' ' || i == '.' || i == '…' || i == '_') {
             substr.push_back(i);
@@ -107,7 +85,6 @@ std::pair<int, std::string> getChapterPageAndName(std::string str, Pos pagePos) 
         }
     }
     std::reverse(str.begin(), str.end());
-    //5removeSpacesFromBeginning(str);
     return {p, str};
 }
 

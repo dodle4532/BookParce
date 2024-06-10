@@ -45,8 +45,10 @@ void MainWindow::on_parseButton_clicked()
     }
     book = Book(path, ui->whatToParce->currentText().toStdString(), pagePos, indexWord, isNoSubchaptersIndex);
     book.parse();
-    ui->textField->clear();
-    ui->textField->setText(QString::fromStdString(book.getContent()));
+    ui->contentText->clear();
+    ui->contentText->setText(QString::fromStdString(book.getContent()));
+    ui->contentCsv->clear();
+    ui->contentCsv->setText(QString::fromStdString(book.getCsv()));
     ui->csvButton->setVisible(true);
 }
 

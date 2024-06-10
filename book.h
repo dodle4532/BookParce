@@ -15,6 +15,7 @@ public:
     ~Book() = default;
     void parse();
     std::string getContent(); // Получаем оглавление в виде строки, чтобы вывести ее в textField
+    std::string getCsv();
     void saveToCsv(std::string path);
     void fillEndPages();
     int getLastPage(int lastChapterStartPage);
